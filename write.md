@@ -66,9 +66,7 @@ comments: false
     </div>
     <div class="field">
       <label for="content">Markdown 内容 *</label>
-      <textarea id="content" placeholder="在此书写 Markdown..." style="min-height:520px"></textarea>
-    </div>
-    <div class="toolbar">
+      <div class="toolbar">
       <button class="btn btn-ghost" id="upload-image-btn">上传图片并插入</button>
       <button class="btn btn-ghost" id="upload-asset-btn">上传附件并插入</button>
       <span class="hint">图片会放在 /images，附件放在 /downloads，提交 PR 时一并上传。</span>
@@ -89,6 +87,8 @@ comments: false
         <button class="tool-btn tiny" data-action="ol">1. 列表</button>
         <button class="tool-btn tiny" data-action="link">链接</button>
       </div>
+      </div>
+      <textarea id="content" placeholder="在此书写 Markdown..." style="min-height:520px"></textarea>
     </div>
     <div class="field">
       <label for="slug">自定义 slug（可选）</label>
