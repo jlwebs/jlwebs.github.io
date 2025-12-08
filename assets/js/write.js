@@ -24,7 +24,10 @@
     loginBtn: document.getElementById('login-btn'),
     logoutBtn: document.getElementById('logout-btn'),
     loginState: document.getElementById('login-state'),
-    gitalkLogin: document.getElementById('gitalk-login')
+    gitalkLogin: document.getElementById('gitalk-login'),
+    authModal: document.getElementById('auth-modal'),
+    authBackdrop: document.getElementById('auth-backdrop'),
+    authClose: document.getElementById('auth-close')
   };
 
   let cachedToken = null;
@@ -59,10 +62,19 @@
     els.logoutBtn.style.display = loggedIn ? 'inline-block' : 'none';
   };
 
+  const openAuth = () => {
+    els.authModal.classList.add('show');
+    els.authBackdrop.classList.add('show');
+  };
+
+  const closeAuth = () => {
+    els.authModal.classList.remove('show');
+    els.authBackdrop.classList.remove('show');
+  };
+
   const ensureGitalkLogin = () => {
     if (gitalkRendered) return;
     gitalkRendered = true;
-    els.gitalkLogin.style.display = 'block';
     // 渲染 Gitalk，用户点击登录后 token 会存入 localStorage
     const g = new Gitalk(Object.assign({}, gitalkConfig, { distractionFreeMode: true }));
     g.render('gitalk-login');
@@ -194,6 +206,7 @@
   els.submit.addEventListener('click', submit);
   els.loginBtn.addEventListener('click', () => {
     ensureGitalkLogin();
+    openAuth();
     setStatus('弹出 GitHub 登录后请授权。');
   });
   els.logoutBtn.addEventListener('click', () => {
@@ -201,6 +214,8 @@
     refreshLoginState();
     setStatus('已清除本地 token。');
   });
+  els.authClose.addEventListener('click', closeAuth);
+  els.authBackdrop.addEventListener('click', closeAuth);
 
   document.addEventListener('DOMContentLoaded', () => {
     renderPreview();
