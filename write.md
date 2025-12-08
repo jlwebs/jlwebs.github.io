@@ -10,12 +10,12 @@ comments: false
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-.write-grid{display:flex;gap:0;margin:1rem auto 0;max-width:1200px;width:90%;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden}
+.write-grid{display:flex;flex-wrap:nowrap;gap:0;margin:1rem auto 0;max-width:1400px;width:90vw;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden;position:relative}
 .write-column{padding:1.5rem;min-width:320px}
 .write-column h3{margin-top:0;margin-bottom:.5rem;font-weight:700}
-.write-left{flex:1 1 50%;background:#fff}
-.write-right{flex:1 1 50%;background:#fafafa;border-left:1px solid #e0e0e0}
-.split-handle{width:8px;cursor:col-resize;background:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.05) 50%, transparent 100%);border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0}
+.write-left{flex:1 1 55%;background:#fff;min-width:560px}
+.write-right{flex:0 0 45%;min-width:480px;background:#fafafa;border-left:1px solid #e0e0e0;position:sticky;top:80px;align-self:flex-start}
+.split-handle{width:10px;cursor:col-resize;background:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.05) 50%, transparent 100%);border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0}
 .field{margin-bottom:1rem}
 .field label{display:block;font-weight:600;margin-bottom:.35rem}
 .field input,.field textarea{width:100%;border:1px solid #d0d1d5;border-radius:4px;padding:.65rem .75rem;font-size:14px;font-family:inherit}
@@ -35,7 +35,7 @@ comments: false
 .flex-between{display:flex;align-items:center;justify-content:space-between}
 .login-box{padding:1rem;border:1px dashed #d0d1d5;border-radius:6px;background:#fafafa;margin-bottom:1rem}
 .badge{display:inline-block;background:#5cb85c;color:#fff;padding:.15rem .55rem;border-radius:999px;font-size:12px}
-@media only screen and (max-width:48em){.write-grid{flex-direction:column}.split-handle{display:none}.write-right{border-left:none}}
+@media only screen and (max-width:48em){.write-grid{flex-direction:column}.split-handle{display:none}.write-right{border-left:none;position:static;min-width:100%}.write-left{min-width:100%}}
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:998}
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:999}
 .modal.show,.modal-backdrop.show{display:flex}
@@ -63,20 +63,8 @@ comments: false
       <input id="title" placeholder="请输入标题">
     </div>
     <div class="field">
-      <label for="slug">自定义 slug（可选）</label>
-      <input id="slug" placeholder="为空则自动生成">
-    </div>
-    <div class="field">
-      <label for="excerpt">摘要 *</label>
-      <textarea id="excerpt" placeholder="一句话摘要，用于列表和 SEO"></textarea>
-    </div>
-    <div class="field">
-      <label for="tags">标签（逗号分隔，可选）</label>
-      <input id="tags" placeholder="如：随笔, 工具, 随想">
-    </div>
-    <div class="field">
-      <label for="feature">封面图 URL（可选）</label>
-      <input id="feature" placeholder="http(s)://...">
+      <label for="content">Markdown 内容 *</label>
+      <textarea id="content" placeholder="在此书写 Markdown..."></textarea>
     </div>
     <div class="toolbar">
       <button class="btn btn-ghost" id="upload-image-btn">上传图片并插入</button>
@@ -101,8 +89,20 @@ comments: false
       </div>
     </div>
     <div class="field">
-      <label for="content">Markdown 内容 *</label>
-      <textarea id="content" placeholder="在此书写 Markdown..."></textarea>
+      <label for="slug">自定义 slug（可选）</label>
+      <input id="slug" placeholder="为空则自动生成">
+    </div>
+    <div class="field">
+      <label for="excerpt">摘要 *</label>
+      <textarea id="excerpt" placeholder="一句话摘要，用于列表和 SEO"></textarea>
+    </div>
+    <div class="field">
+      <label for="tags">标签（逗号分隔，可选）</label>
+      <input id="tags" placeholder="如：随笔, 工具, 随想">
+    </div>
+    <div class="field">
+      <label for="feature">封面图 URL（可选）</label>
+      <input id="feature" placeholder="http(s)://...">
     </div>
     <button id="submit-btn" class="btn-primary">生成 PR 并提交</button>
     <div id="status" class="status"></div>

@@ -299,9 +299,38 @@
     editSha = data.sha;
     const md = decodeURIComponent(escape(atob(data.content.replace(/\\n/g, ''))));
     els.content.value = md;
+    const front = parseFrontMatter(md);
+    if (front.title) els.title.value = front.title;
+    if (front.excerpt) els.excerpt.value = front.excerpt;
+    if (front.feature) els.feature.value = front.feature;
+    if (front.tags) els.tags.value = front.tags.join(', ');
+    if (editPath) els.slug.value = slugify(editPath.split('/').pop().replace(/\\.md$/, ''));
     renderPreview();
     editLoaded = true;
     setStatus('已载入，可直接编辑提交。');
+  };
+
+  const parseFrontMatter = (md) => {
+    const match = md.match(/^---\\n([\\s\\S]*?)\\n---/);
+    if (!match) return {};
+    const lines = match[1].split('\\n');
+    const data = {};
+    lines.forEach(line => {
+      const idx = line.indexOf(':');
+      if (idx === -1) return;
+      const key = line.slice(0, idx).trim();
+      let val = line.slice(idx + 1).trim();
+      if (val.startsWith('"') && val.endsWith('"')) {
+        val = val.slice(1, -1);
+      }
+      if (key === 'tags') {
+        const arr = val.replace(/[\\[\\]]/g, '').split(',').map(t => t.trim()).filter(Boolean);
+        data.tags = arr;
+      } else {
+        data[key] = val;
+      }
+    });
+    return data;
   };
 
   const setupSplitter = () => {
