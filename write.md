@@ -10,8 +10,9 @@ comments: false
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-.write-grid{display:flex;flex-wrap:nowrap;gap:0;margin:1rem auto 0;width:90vw;max-width:90vw;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden;position:relative;justify-content:center}
-.write-column{padding:1.5rem 2rem;min-width:320px}
+.full-bleed{position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw;padding:0 5vw;box-sizing:border-box}
+.write-grid{display:flex;flex-wrap:nowrap;gap:0;margin:1rem auto 0;width:100%;max-width:none;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden;position:relative;justify-content:center}
+.write-column{padding:1.5rem 2rem;min-width:320px;box-sizing:border-box}
 .write-column h3{margin-top:0;margin-bottom:.5rem;font-weight:700}
 .write-left{flex:1 1 55%;background:#fff;min-width:520px}
 .write-right{flex:0 0 45%;min-width:440px;background:#fafafa;border-left:1px solid #e0e0e0;position:sticky;top:80px;align-self:flex-start}
@@ -19,7 +20,7 @@ comments: false
 .field{margin-bottom:1rem}
 .field label{display:block;font-weight:600;margin-bottom:.35rem}
 .field input,.field textarea{width:100%;border:1px solid #d0d1d5;border-radius:4px;padding:.65rem .75rem;font-size:14px;font-family:inherit}
-.field textarea{min-height:260px;resize:vertical}
+.field textarea{min-height:160px;resize:vertical}
 .pill{display:inline-block;padding:.35rem .65rem;border:1px solid #d0d1d5;border-radius:20px;margin-right:.35rem;margin-bottom:.35rem;font-size:12px;color:#383838;background:#f7f7f7}
 .btn-primary{background:#308cbc;color:#fff;border:1px solid #308cbc;border-radius:4px;padding:.6rem 1rem;cursor:pointer;transition:all .3s}
 .btn-primary:hover{background:#fff;color:#308cbc;box-shadow:0 0 1px rgba(0,0,0,.35)}
@@ -43,6 +44,7 @@ comments: false
 .modal-close{position:absolute;top:10px;right:10px;border:none;background:transparent;font-size:20px;cursor:pointer}
 </style>
 
+<div class="full-bleed">
 <div class="write-grid split-container">
   <div class="write-column write-left">
     <div class="flex-between">
@@ -64,7 +66,7 @@ comments: false
     </div>
     <div class="field">
       <label for="content">Markdown 内容 *</label>
-      <textarea id="content" placeholder="在此书写 Markdown..."></textarea>
+      <textarea id="content" placeholder="在此书写 Markdown..." style="min-height:520px"></textarea>
     </div>
     <div class="toolbar">
       <button class="btn btn-ghost" id="upload-image-btn">上传图片并插入</button>
@@ -94,7 +96,7 @@ comments: false
     </div>
     <div class="field">
       <label for="excerpt">摘要 *</label>
-      <textarea id="excerpt" placeholder="一句话摘要，用于列表和 SEO"></textarea>
+      <textarea id="excerpt" placeholder="一句话摘要，用于列表和 SEO" rows="2" style="min-height:80px"></textarea>
     </div>
     <div class="field">
       <label for="tags">标签（逗号分隔，可选）</label>
@@ -112,6 +114,7 @@ comments: false
     <h3>实时预览</h3>
     <div class="preview" id="preview">输入 Markdown 后显示预览</div>
   </div>
+</div>
 </div>
 
 <div class="modal-backdrop" id="auth-backdrop"></div>
