@@ -10,7 +10,6 @@ layout: compress
     {% include head.html %}
     <link rel="stylesheet" href="/assets/css/gitalk.css">
     <script src="/assets/js/gitalk.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body data-post-path="{{ page.path }}" data-post-title="{{ page.title | escape }}">
     {% include nav.html %}
@@ -38,36 +37,12 @@ layout: compress
                         {% endif %}
                             <i class="fa fa-chevron-left"></i>
                         </a>
-                        <button class="btn btn-info zoombtn" id="edit-post-btn">编辑</button>
+                        <a class="btn btn-info zoombtn" href="{{site.url}}/write/?edit={{ page.path | url_encode }}">编辑</a>
                     </div>
                 </div>
                 {{ content }}
                 <div class="entry-meta">
                 {% include meta.html %}
-                </div>
-                <div id="edit-panel" class="edit-panel" style="display:none;">
-                    <div class="edit-controls">
-                        <button class="btn btn-info btn-primary" id="edit-login-btn">GitHub 登录</button>
-                        <button class="btn btn-warning btn-ghost" id="edit-logout-btn" style="display:none">退出登录</button>
-                        <span class="badge" id="edit-login-state">未登录</span>
-                        <button class="btn btn-ghost" id="edit-cancel">收起</button>
-                        <span id="edit-status" class="status"></span>
-                    </div>
-                    <div class="edit-grid">
-                        <div class="edit-column">
-                            <div class="field">
-                                <label for="edit-text">Markdown（含 front matter）</label>
-                                <textarea id="edit-text" style="min-height:420px"></textarea>
-                            </div>
-                            <div class="edit-actions">
-                                <button class="btn btn-success btn-primary" id="edit-submit">提交编辑 PR</button>
-                            </div>
-                        </div>
-                        <div class="edit-column">
-                            <h4 style="margin-top:0">预览</h4>
-                            <div id="edit-preview" class="preview">加载后显示预览</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -80,34 +55,7 @@ layout: compress
     <style>
       .status{font-size:13px;color:#383838}
       .badge{display:inline-block;background:#5cb85c;color:#fff;padding:.15rem .55rem;border-radius:999px;font-size:12px}
-      .field{margin-bottom:1rem}
-      .field label{display:block;font-weight:600;margin-bottom:.35rem}
-      .field textarea{width:100%;border:1px solid #d0d1d5;border-radius:4px;padding:.65rem .75rem;font-size:14px;font-family:inherit;resize:vertical}
-      .btn-primary{background:#308cbc;color:#fff;border:1px solid #308cbc;border-radius:4px;padding:.6rem 1rem;cursor:pointer;transition:all .3s}
-      .btn-primary:hover{background:#fff;color:#308cbc;box-shadow:0 0 1px rgba(0,0,0,.35)}
-      .btn-ghost{background:transparent;color:#308cbc;border:1px dashed #308cbc}
-      .edit-panel{margin:2rem auto;max-width:1200px;width:90%;background:#fff;border:1px solid #d0d1d5;border-radius:6px;padding:1rem;box-shadow:0 0 10px rgba(0,0,0,.08)}
-      .edit-controls{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
-      .edit-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-      .edit-grid{display:flex;flex-wrap:wrap;gap:1rem}
-      .edit-column{flex:1 1 420px;background:#fafafa;border:1px solid #e0e0e0;border-radius:6px;padding:1rem;min-width:320px}
-      .preview{background:#fff;border:1px solid #d0d1d5;border-radius:4px;padding:1rem;min-height:420px;overflow:auto}
-      .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:998}
-      .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:999}
-      .modal.show,.modal-backdrop.show{display:flex}
-      .modal-dialog{background:#fff;border-radius:8px;max-width:520px;width:90%;padding:1.5rem;box-shadow:0 6px 24px rgba(0,0,0,.25);position:relative}
-      .modal-close{position:absolute;top:10px;right:10px;border:none;background:transparent;font-size:20px;cursor:pointer}
     </style>
-    <div class="modal-backdrop" id="edit-auth-backdrop"></div>
-    <div class="modal" id="edit-auth-modal">
-      <div class="modal-dialog">
-        <button class="modal-close" id="edit-auth-close">&times;</button>
-        <h3 style="margin-top:0">GitHub 登录</h3>
-        <p class="hint" style="margin-top:-.2rem">授权后 token 仅存浏览器，用于提交编辑 PR。</p>
-        <div id="edit-gitalk"></div>
-      </div>
-    </div>
-    <script src="/assets/js/edit.js"></script>
     {% if site.mathjax == true %}
     <!-- MathJax -->
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
