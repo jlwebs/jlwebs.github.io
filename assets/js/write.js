@@ -440,6 +440,14 @@
   }
   els.authClose.addEventListener('click', closeAuth);
   els.authBackdrop.addEventListener('click', closeAuth);
+  if (els.toolbar && els.toolbar.length) {
+    els.toolbar.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.getAttribute('data-action');
+        applyToolbar(action);
+      });
+    });
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     renderPreview();
