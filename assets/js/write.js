@@ -44,6 +44,9 @@
   let editSha = null;
   let editLoaded = false;
   let pendingUploads = [];
+  let syncingFromContent = false;
+  let syncingFromMeta = false;
+  let preservedDate = null;
 
   const getToken = () => localStorage.getItem('GT_ACCESS_TOKEN');
   const setStatus = (msg, isError) => {
@@ -74,6 +77,7 @@
   const renderPreview = () => {
     const md = els.content.value || '';
     els.preview.innerHTML = md ? marked.parse(md) : '输入 Markdown 后显示预览';
+    if (!syncingFromMeta) applyFrontMatterFromContent();
   };
 
   const refreshLoginState = () => {
@@ -299,21 +303,29 @@
     editSha = data.sha;
     const md = decodeURIComponent(escape(atob(data.content.replace(/\\n/g, ''))));
     els.content.value = md;
-    const front = parseFrontMatter(md);
-    if (front.title) els.title.value = front.title;
-    if (front.excerpt) els.excerpt.value = front.excerpt;
-    if (front.feature) els.feature.value = front.feature;
-    if (front.tags) els.tags.value = front.tags.join(', ');
-    if (editPath) els.slug.value = slugify(editPath.split('/').pop().replace(/\\.md$/, ''));
+    applyFrontMatterFromContent();
     renderPreview();
     editLoaded = true;
     setStatus('已载入，可直接编辑提交。');
   };
 
+  const applyFrontMatterFromContent = () => {
+    if (syncingFromMeta) return;
+    const front = parseFrontMatter(els.content.value || '');
+    syncingFromContent = true;
+    els.title.value = front.title || '';
+    els.excerpt.value = front.excerpt || '';
+    els.feature.value = front.feature || '';
+    els.tags.value = front.tags ? front.tags.join(', ') : '';
+    if (front.date) preservedDate = front.date;
+    if (editPath) els.slug.value = slugify(editPath.split('/').pop().replace(/\.md$/, ''));
+    syncingFromContent = false;
+  };
+
   const parseFrontMatter = (md) => {
-    const match = md.match(/^---\\n([\\s\\S]*?)\\n---/);
+    const match = md.match(/^---\n([\s\S]*?)\n---/);
     if (!match) return {};
-    const lines = match[1].split('\\n');
+    const lines = match[1].split('\n');
     const data = {};
     lines.forEach(line => {
       const idx = line.indexOf(':');
@@ -324,13 +336,49 @@
         val = val.slice(1, -1);
       }
       if (key === 'tags') {
-        const arr = val.replace(/[\\[\\]]/g, '').split(',').map(t => t.trim()).filter(Boolean);
+        const arr = val.replace(/[\[\]]/g, '').split(',').map(t => t.trim()).filter(Boolean);
         data.tags = arr;
       } else {
         data[key] = val;
       }
     });
     return data;
+  };
+
+  const updateContentFrontMatter = () => {
+    if (syncingFromContent) return;
+    syncingFromMeta = true;
+    const md = els.content.value || '';
+    const parts = splitFrontMatter(md);
+    const fm = buildFrontMatterFromFields();
+    const body = parts.body.trimStart();
+    els.content.value = `${fm}\n\n${body}`;
+    renderPreview();
+    syncingFromMeta = false;
+  };
+
+  const splitFrontMatter = (md) => {
+    const match = md.match(/^---\n([\s\S]*?)\n---/);
+    if (!match) return { front: '', body: md };
+    const front = match[0];
+    const body = md.slice(front.length).replace(/^\s+/, '');
+    return { front, body };
+  };
+
+  const buildFrontMatterFromFields = () => {
+    const date = preservedDate || new Date().toISOString().slice(0, 10);
+    const tagsArr = (els.tags.value || '').split(',').map(t => t.trim()).filter(Boolean);
+    return [
+      '---',
+      'layout: post',
+      `title: "${(els.title.value || '').replace(/"/g, '\\"')}"`,
+      `date: ${date}`,
+      `excerpt: "${(els.excerpt.value || '').replace(/"/g, '\\"')}"`,
+      `tags: [${tagsArr.join(', ')}]`,
+      'comments: true',
+      els.feature.value ? `feature: ${els.feature.value}` : '',
+      '---'
+    ].filter(Boolean).join('\n');
   };
 
   const setupSplitter = () => {
@@ -467,6 +515,13 @@
     els.uploadAssetBtn.addEventListener('click', () => handleUploadClick(els.uploadAssetInput));
     els.uploadAssetInput.addEventListener('change', () => handleUploadChange(els.uploadAssetInput, 'downloads', false));
   }
+  [els.title, els.slug, els.excerpt, els.tags, els.feature].forEach(el => {
+    if (!el) return;
+    el.addEventListener('input', () => {
+      preservedDate = preservedDate || null;
+      updateContentFrontMatter();
+    });
+  });
   els.authClose.addEventListener('click', closeAuth);
   els.authBackdrop.addEventListener('click', closeAuth);
   if (els.toolbar && els.toolbar.length) {

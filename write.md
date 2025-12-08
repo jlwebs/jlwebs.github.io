@@ -10,11 +10,11 @@ comments: false
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-.write-grid{display:flex;flex-wrap:nowrap;gap:0;margin:1rem auto 0;max-width:1400px;width:90vw;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden;position:relative}
+.write-grid{display:flex;flex-wrap:nowrap;gap:0;margin:1rem auto 0;max-width:1400px;width:90%;background:#fff;border:1px solid #d0d1d5;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,.1);overflow:hidden;position:relative;justify-content:center}
 .write-column{padding:1.5rem;min-width:320px}
 .write-column h3{margin-top:0;margin-bottom:.5rem;font-weight:700}
-.write-left{flex:1 1 55%;background:#fff;min-width:560px}
-.write-right{flex:0 0 45%;min-width:480px;background:#fafafa;border-left:1px solid #e0e0e0;position:sticky;top:80px;align-self:flex-start}
+.write-left{flex:1 1 55%;background:#fff;min-width:520px}
+.write-right{flex:0 0 45%;min-width:440px;background:#fafafa;border-left:1px solid #e0e0e0;position:sticky;top:80px;align-self:flex-start}
 .split-handle{width:10px;cursor:col-resize;background:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.05) 50%, transparent 100%);border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0}
 .field{margin-bottom:1rem}
 .field label{display:block;font-weight:600;margin-bottom:.35rem}
