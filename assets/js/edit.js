@@ -9,47 +9,20 @@
   const postPath = document.body.getAttribute('data-post-path') || '';
   const postTitle = document.body.getAttribute('data-post-title') || document.title;
 
-  // Build modal
-  const modalHtml = `
-    <div class="modal-backdrop" id="edit-backdrop"></div>
-    <div class="modal" id="edit-modal">
-      <div class="modal-dialog" style="max-width:820px;width:92%">
-        <button class="modal-close" id="edit-close">&times;</button>
-        <h3 style="margin-top:0">编辑文章</h3>
-        <p class="hint" style="margin-top:-.35rem">登录后拉取原文，修改后提交 PR。</p>
-        <div style="margin-bottom:1rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-info btn-primary" id="edit-login-btn">GitHub 登录</button>
-          <button class="btn btn-warning btn-ghost" id="edit-logout-btn" style="display:none">退出登录</button>
-          <span class="badge" id="edit-login-state">未登录</span>
-        </div>
-        <div id="edit-gitalk"></div>
-        <div class="field" style="margin-top:1rem">
-          <label for="edit-text">Markdown（含 front matter）</label>
-          <textarea id="edit-text" style="min-height:360px"></textarea>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-success btn-primary" id="edit-submit">提交编辑 PR</button>
-          <span id="edit-status" class="status"></span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = modalHtml;
-  document.body.appendChild(wrapper);
-
   const els = {
-    modal: document.getElementById('edit-modal'),
-    backdrop: document.getElementById('edit-backdrop'),
-    close: document.getElementById('edit-close'),
+    panel: document.getElementById('edit-panel'),
     loginBtn: document.getElementById('edit-login-btn'),
     logoutBtn: document.getElementById('edit-logout-btn'),
     loginState: document.getElementById('edit-login-state'),
     status: document.getElementById('edit-status'),
     text: document.getElementById('edit-text'),
     submit: document.getElementById('edit-submit'),
-    gitalk: document.getElementById('edit-gitalk')
+    cancel: document.getElementById('edit-cancel'),
+    preview: document.getElementById('edit-preview'),
+    gitalk: document.getElementById('edit-gitalk'),
+    authModal: document.getElementById('edit-auth-modal'),
+    authBackdrop: document.getElementById('edit-auth-backdrop'),
+    authClose: document.getElementById('edit-auth-close')
   };
 
   let gitalkRendered = false;
@@ -65,13 +38,13 @@
     id: `edit-${postPath}`
   };
 
-  const openModal = () => {
-    els.modal.classList.add('show');
-    els.backdrop.classList.add('show');
+  const openAuth = () => {
+    els.authModal.classList.add('show');
+    els.authBackdrop.classList.add('show');
   };
-  const closeModal = () => {
-    els.modal.classList.remove('show');
-    els.backdrop.classList.remove('show');
+  const closeAuth = () => {
+    els.authModal.classList.remove('show');
+    els.authBackdrop.classList.remove('show');
   };
 
   const setStatus = (msg, isError) => {
@@ -122,7 +95,13 @@
     currentSha = data.sha;
     const md = decodeURIComponent(escape(atob(data.content.replace(/\\n/g, ''))));
     els.text.value = md;
+    renderPreview();
     setStatus('已载入，可修改后提交。');
+  };
+
+  const renderPreview = () => {
+    const md = els.text.value || '';
+    els.preview.innerHTML = md ? marked.parse(md) : '预览区域';
   };
 
   const createBranch = async (branchName) => {
@@ -161,18 +140,20 @@
     });
   };
 
+  let contentLoaded = false;
+
   const startEdit = async () => {
     refreshLoginState();
+    els.panel.style.display = 'block';
     if (!cachedToken) {
       ensureGitalk();
-      openModal();
+      openAuth();
       setStatus('请先登录 GitHub。', true);
       return;
     }
-    ensureGitalk();
-    openModal();
     try {
       await loadContent();
+      contentLoaded = true;
     } catch (e) {
       console.error(e);
       setStatus(`加载失败：${e.message}`, true);
@@ -210,10 +191,15 @@
   };
 
   editBtn.addEventListener('click', startEdit);
+  els.cancel.addEventListener('click', () => {
+    els.panel.style.display = 'none';
+    contentLoaded = false;
+  });
   els.submit.addEventListener('click', submit);
+  els.text.addEventListener('input', renderPreview);
   els.loginBtn.addEventListener('click', () => {
     ensureGitalk();
-    openModal();
+    openAuth();
     setStatus('请在弹框中完成 GitHub 登录。');
   });
   els.logoutBtn.addEventListener('click', () => {
@@ -221,8 +207,20 @@
     refreshLoginState();
     setStatus('已退出登录。');
   });
-  els.close.addEventListener('click', closeModal);
-  els.backdrop.addEventListener('click', closeModal);
+  els.authClose.addEventListener('click', () => {
+    closeAuth();
+    refreshLoginState();
+    if (cachedToken && !contentLoaded) {
+      startEdit();
+    }
+  });
+  els.authBackdrop.addEventListener('click', () => {
+    closeAuth();
+    refreshLoginState();
+    if (cachedToken && !contentLoaded) {
+      startEdit();
+    }
+  });
 
   refreshLoginState();
 })();

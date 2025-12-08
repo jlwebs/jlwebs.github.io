@@ -10,8 +10,8 @@ comments: false
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-.write-grid{display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:1rem}
-.write-column{flex:1 1 320px;background:#fff;border-radius:6px;padding:1.5rem;box-shadow:0 0 10px rgba(0,0,0,.1)}
+.write-grid{display:flex;flex-wrap:wrap;gap:1.5rem;margin:1rem auto 0;max-width:1200px;width:90%}
+.write-column{flex:1 1 420px;background:#fff;border-radius:6px;padding:1.5rem;box-shadow:0 0 10px rgba(0,0,0,.1)}
 .write-column h3{margin-top:0;margin-bottom:.5rem;font-weight:700}
 .field{margin-bottom:1rem}
 .field label{display:block;font-weight:600;margin-bottom:.35rem}
